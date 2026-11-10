@@ -44,7 +44,39 @@ def get_transforms(augment: bool) -> transforms.Compose:
         ])
 
     return transforms.Compose([transforms.ToTensor(), normalize])
+def get_transforms(augment: bool) -> transforms.Compose:
 
+    normalize = transforms.Normalize(
+        CIFAR100_MEAN,
+        CIFAR100_STD
+    )
+
+    if augment:
+        return transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+
+            transforms.ColorJitter(
+                brightness=0.2,
+                contrast=0.2,
+                saturation=0.2,
+                hue=0.05
+            ),
+
+            transforms.ToTensor(),
+            normalize,
+
+            transforms.RandomErasing(
+                p=0.25,
+                scale=(0.02, 0.15),
+                ratio=(0.3, 3.3)
+            )
+        ])
+
+    return transforms.Compose([
+        transforms.ToTensor(),
+        normalize
+    ])
 
 # --------------------------------------------------------------------------- #
 # 2. Chargement des jeux de données bruts
