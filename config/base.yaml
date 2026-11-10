@@ -1,0 +1,19 @@
+# Paramètres communs à tous les modèles.
+# Chaque fichier de modèle (lenet.yaml, resnet.yaml, vgg.yaml) peut en surcharger certains.
+ 
+seed: 42                    # Rend les résultats reproductibles
+ 
+data:
+  batch_size: 128           # Images par batch
+  val_size: 5000            # Images extraites du train pour la validation
+  augment: true             # Augmentation de données sur le train
+  num_workers: 0         # Processus de chargement (mettre 0 en cas d'erreur sous Windows)
+ 
+training:
+  epochs: 50                # Nombre maximum de passages sur le jeu d'entraînement
+  optimizer: sgd
+  lr: 0.1                   # Learning rate
+  momentum: 0.9
+  weight_decay: 0.0005      # Régularisation L2
+  early_stopping_patience: 10   # Arrêt si la validation ne s'améliore pas pendant 10 epochs
+ 

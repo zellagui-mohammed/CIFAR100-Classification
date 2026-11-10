@@ -1,0 +1,10 @@
+# LeNet-5 : petit réseau, apprend avec un learning rate plus faible.
+
+model:
+  name: lenet
+  num_classes: 100
+
+training:
+  epochs: 100
+  lr: 0.01
+  optimizer: adamw

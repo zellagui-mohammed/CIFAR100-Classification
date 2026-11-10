@@ -1,0 +1,13 @@
+# Données et résultats d'expériences
+data/
+runs/
+
+# Poids des modèles
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+

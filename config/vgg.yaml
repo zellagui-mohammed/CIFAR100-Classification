@@ -1,0 +1,9 @@
+# VGG-16 adapté à CIFAR (images 32x32).
+
+model:
+  name: vgg16
+  num_classes: 100
+
+training:
+  epochs: 60
+  lr: 0.01
