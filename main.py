@@ -1,35 +1,79 @@
-#from src.models import build_model
-from src.utils import load_config , get_device ,create_run_dir ,set_seed
-from src.train import fit 
-#from src.dataset import get_dataloaders
-from src.dataset_pre import get_dataloaders_pre
-#from src.models.pretrained import build_pretrained
-from src.models.pre import build_pretrained
+"""Point d'entrée : entraîne un modèle pré-entraîné, puis l'évalue sur le test.
+
+Utilisation :
+    python main.py                              # utilise la config par défaut (DEFAULT_CONFIG)
+    python main.py --config resnet18_pretrained.yaml
+"""
+
+import argparse
 import time
-from numpy import round 
-if __file__=="main":
-    device = get_device()
-    config_name="vgg11_bn.yaml"
-    config=load_config(config_name)
-    run_dir=create_run_dir(config)
+
+import torch
+import torch.nn as nn
+
+from src.dataset import get_dataloaders
+from src.evaluate import evaluate
+from src.models.pretrained import build_pretrained
+from src.train import fit
+from src.utils import create_run_dir, get_device, load_config, save_results, set_seed
+
+DEFAULT_CONFIG = "vgg11_bn.yaml"
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Entraînement sur CIFAR-100")
+    parser.add_argument("--config", default=DEFAULT_CONFIG,
+                        help="fichier de config du modèle (dans config/)")
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    # 1. Configuration, seed, device, dossier de run
+    config = load_config(args.config)
     set_seed(config["seed"])
-    model=build_pretrained(model_name=config["model"]["name"], 
-                        num_classes=config["model"]["num_classes"],
-                        freeze_backbone=config["model"]["freeze_backbone"])
+    device = get_device()
+    run_dir = create_run_dir(config)
+    print(f"Config : {args.config} | device : {device} | run : {run_dir.name}")
 
-    train_loader , val_loader , test_loader = get_dataloaders_pre(num_workers=config["data"]["num_workers"],
-                                                                image_size=config["data"]["image_size"],
-                                                                normalization=config["data"]["normalization"]
-                                                            )
-    start = time.time()
-    print(f"le dédut de l'entrainement {start}")
-    fit(model=model,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        config=config,
-        run_dir=run_dir,
-        device=device)
+    # 2. Modèle
+    model = build_pretrained(
+        config["model"]["name"],
+        num_classes=config["model"]["num_classes"],
+        freeze_backbone=config["model"]["freeze_backbone"],
+    )
 
-    fin=(time.time()-start)/60.0
-    print(f"le temps de l'entrainement est {round(fin)} minutes ")
+    # 3. Données (tous les paramètres viennent de la config)
+    data_cfg = config["data"]
+    train_loader, val_loader, test_loader = get_dataloaders(
+        batch_size=data_cfg["batch_size"],
+        val_size=data_cfg["val_size"],
+        augment=data_cfg["augment"],
+        num_workers=data_cfg["num_workers"],
+        seed=config["seed"],
+        image_size=data_cfg.get("image_size", 32),
+        normalization=data_cfg.get("normalization", "cifar"),
+    )
 
+    # 4. Entraînement
+    print("Début de l'entraînement")
+    start = time.perf_counter()
+    best_val_acc = fit(model, train_loader, val_loader, config, run_dir, device)
+    minutes = (time.perf_counter() - start) / 60
+    print(f"Durée de l'entraînement : {minutes:.1f} minutes")
+
+    # 5. Test final : on recharge le meilleur modèle (meilleure validation)
+    model.load_state_dict(torch.load(run_dir / "best.pth", map_location=device))
+    results = evaluate(model, test_loader, nn.CrossEntropyLoss(), device, full=True)
+    results["best_val_acc"] = best_val_acc
+    results["train_minutes"] = round(minutes, 1)
+
+    save_results(run_dir, results)
+    print("Résultats sur le test :")
+    for key, value in results.items():
+        print(f"  {key}: {value}")
+
+
+if __name__ == "__main__":
+    main()
