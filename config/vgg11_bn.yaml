@@ -1,0 +1,13 @@
+model :
+    name : vgg11_bn 
+    num_classes : 100
+    freeze_backbone: true
+training:
+  
+    lr: 0.01
+    epochs : 2
+data : 
+    image_size :  128
+    normalization : imagenet
+    num_workers : 2 
+

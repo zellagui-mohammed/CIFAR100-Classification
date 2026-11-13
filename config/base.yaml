@@ -12,7 +12,7 @@ data:
 training:
   epochs: 50                # Nombre maximum de passages sur le jeu d'entraînement
   optimizer: sgd
-  lr: 0.1                   # Learning rate
+  lr: 0.01                   # Learning rate
   momentum: 0.9
   weight_decay: 0.0005      # Régularisation L2
   early_stopping_patience: 10   # Arrêt si la validation ne s'améliore pas pendant 10 epochs

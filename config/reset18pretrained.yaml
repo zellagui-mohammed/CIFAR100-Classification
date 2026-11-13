@@ -1,0 +1,17 @@
+# ResNet-18 pré-entraîné sur ImageNet (transfer learning).
+# Étape 1 : on n'entraîne que la dernière couche (freeze_backbone: true).
+# Étape 2 (fine-tuning) : freeze_backbone: false et lr: 0.001.
+
+model:
+  name: resnet18_pretrained
+  num_classes: 100
+  freeze_backbone: true
+
+data:
+  image_size: 224           # taille attendue par les modèles ImageNet (128 = plus rapide)
+  normalization: imagenet   # statistiques ImageNet, comme à l'entraînement d'origine
+  batch_size: 128
+
+training:
+  epochs: 20
+  lr: 0.01

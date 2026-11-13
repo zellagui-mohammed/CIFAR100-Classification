@@ -5,5 +5,5 @@ model:
   num_classes: 100
 
 training:
-  epochs: 60
+  epochs: 40
   lr: 0.01

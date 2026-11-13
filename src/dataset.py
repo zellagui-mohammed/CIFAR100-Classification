@@ -113,7 +113,7 @@ def split_indices(n_samples: int, val_size: int, seed: int):
 # 4. Fonction principale
 # --------------------------------------------------------------------------- #
 
-def get_dataloaders_pre(
+def get_dataloaders(
     batch_size: int = 128,
     val_size: int = 5000,
     augment: bool = True,
