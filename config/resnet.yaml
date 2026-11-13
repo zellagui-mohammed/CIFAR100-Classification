@@ -1,0 +1,8 @@
+model :
+   name : resnet
+   num_classes : 100
+
+training :
+  epochs : 60
+
+   
