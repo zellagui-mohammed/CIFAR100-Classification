@@ -5,7 +5,7 @@ model :
 training:
   
     lr: 0.01
-    epochs : 2
+    epochs : 40
 data : 
     image_size :  128
     normalization : imagenet
