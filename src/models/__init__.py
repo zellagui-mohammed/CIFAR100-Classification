@@ -21,7 +21,7 @@ def build_model(model_name, in_channels=3, num_classes=10):
     if model_name=="lenet5":
         return LeNet(nb_out=num_classes)
     if model_name=="vgg16":
-        return VGG(in_channels=in_channels, num_classes=num_classes, config=[2, 2, 3, 3, 3])
+        return VGG(in_channels=in_channels, num_classes=num_classes, config=[1, 1, 2, 2, 2])
     if model_name=="lenet5_moderne":
         return LeNetModernized(num_classes=num_classes)
     elif model_name=="resnet18" :
