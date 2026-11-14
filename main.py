@@ -36,7 +36,7 @@ def main():
     device = get_device()
     run_dir = create_run_dir(config)
     print(f"Config : {args.config} | device : {device} | run : {run_dir.name}")
-
+    print("la configuration est ",config)
     # 2. Modèle
     model = build_pretrained(
         config["model"]["name"],
