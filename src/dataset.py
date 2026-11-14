@@ -48,7 +48,7 @@ def get_stats(normalization: str):
 def get_transforms(augment: bool, image_size: int = 32, normalization: str = "cifar"):
     """Retourne la chaîne de transformations appliquée aux images.
 
-    augment=True  : entraînement -> recadrage aléatoire + miroir, puis normalisation.
+    augment=True  : entraînement -> recadrage, miroir, variation couleur, normalisation + RandomErasing.
     augment=False : validation / test -> uniquement redimensionnement + normalisation.
     image_size    : 32 = taille d'origine ; 224 pour les modèles pré-entraînés.
     """
@@ -56,17 +56,21 @@ def get_transforms(augment: bool, image_size: int = 32, normalization: str = "ci
     steps = []
 
     if image_size != 32:
-        steps.append(transforms.Resize(image_size))   # agrandit l'image
+        steps.append(transforms.Resize((image_size, image_size)))   # garantit exactement (224, 224)
 
     if augment:
         steps += [
             transforms.RandomCrop(image_size, padding=image_size // 8),  # décalage aléatoire
             transforms.RandomHorizontalFlip(),                           # miroir une fois sur deux
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),  # variation luminosité/contraste
         ]
 
     steps += [transforms.ToTensor(), transforms.Normalize(mean, std)]
-    return transforms.Compose(steps)
 
+    if augment:
+        steps.append(transforms.RandomErasing(p=0.25, scale=(0.02, 0.15)))  # masque aléatoire (sur Tenseur uniquement)
+
+    return transforms.Compose(steps)
 
 # --------------------------------------------------------------------------- #
 # 2. Chargement des jeux de données bruts
@@ -157,7 +161,7 @@ def get_dataloaders(
 if __name__ == "__main__":
     print("Dossier des données :", DATA_DIR)
 
-    train_loader, val_loader, test_loader = get_dataloaders_pre()
+    train_loader, val_loader, test_loader = get_dataloaders()
     print(f"train: {len(train_loader.dataset)} | "
           f"val: {len(val_loader.dataset)} | "
           f"test: {len(test_loader.dataset)}")
