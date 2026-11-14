@@ -69,10 +69,15 @@ def fit(model, train_loader, val_loader, config: dict, run_dir, device) -> float
     cfg = config["training"]
     model.to(device)
 
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     optimizer = build_optimizer(model, cfg)
     # Réduit progressivement le learning rate au fil des epochs
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=cfg["epochs"])
+
+
+    if torch.cuda.device_count() > 1:
+        print(f"Utilisation de {torch.cuda.device_count()} GPUs !")
+        model = nn.DataParallel(model)
 
     best_acc = 0.0
     epochs_without_progress = 0
