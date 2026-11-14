@@ -3,7 +3,7 @@
 # Étape 2 (fine-tuning) : freeze_backbone: false et lr: 0.001.
 
 model:
-  name: resnet18_pretrained
+  name: resnet18
   num_classes: 100
   freeze_backbone: true
 
