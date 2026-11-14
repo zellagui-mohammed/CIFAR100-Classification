@@ -11,6 +11,7 @@ data:
   image_size: 224           # taille attendue par les modèles ImageNet (128 = plus rapide)
   normalization: imagenet   # statistiques ImageNet, comme à l'entraînement d'origine
   batch_size: 128
+  num_workers : 2
 
 training:
   epochs: 20
