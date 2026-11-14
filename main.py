@@ -64,7 +64,12 @@ def main():
     print(f"Durée de l'entraînement : {minutes:.1f} minutes")
 
     # 5. Test final : on recharge le meilleur modèle (meilleure validation)
-    model.load_state_dict(torch.load(run_dir / "best.pth", map_location=device))
+    state_dict = torch.load(run_dir / "best.pth", map_location=device)
+    clean_state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+    model.load_state_dict(clean_state_dict)
+
+
+   
     results = evaluate(model, test_loader, nn.CrossEntropyLoss(), device, full=True)
     results["best_val_acc"] = best_val_acc
     results["train_minutes"] = round(minutes, 1)

@@ -1,17 +1,23 @@
-model :
-    name : vgg11_bn 
-    num_classes : 100
-    freeze_backbone: false
-training:
-  
-    lr: 0.0003
-    epochs : 30
-    weight_decay: 0.02
-    optimizer : adamw
-    
-data : 
-    image_size :  224
-    normalization : imagenet
-    num_workers : 2 
-    
+seed: 42
 
+model:
+  name: vgg11_bn
+  num_classes: 100
+  freeze_backbone: false
+
+data:
+  batch_size: 128
+  val_size: 5000
+  augment: true
+  num_workers: 2
+  image_size: 224
+  normalization: imagenet
+
+training:
+  epochs: 30
+  optimizer: adamw
+  lr: 0.0003               # LR du classifier (tête neuve)
+  backbone_lr: 0.00005     # LR du backbone (6x plus lent pour stopper l'overfitting)
+  weight_decay: 0.05       # Renforcé (au lieu de 0.02)
+  label_smoothing: 0.1
+  early_stopping_patience: 10
