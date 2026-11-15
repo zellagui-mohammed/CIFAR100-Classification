@@ -4,23 +4,23 @@ from torchvision import models
 def build_pretrained(model_name: str = "resnet18", num_classes: int = 100, freeze_backbone: bool = True):
     
     if model_name == "resnet18":
-        model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+        model = models.resnet18(
+            weights=models.ResNet18_Weights.DEFAULT
+        )
 
-        if freeze_backbone:
-            for param in model.parameters():
-                param.requires_grad = False
-        else:
-            # Dégeler layer3 et layer4
-            for param in model.layer3.parameters():
-                param.requires_grad = True
+        # Geler tout le backbone
+        for param in model.parameters():
+            param.requires_grad = False
 
-            for param in model.layer4.parameters():
+        # Dégeler layer2, layer3 et layer4
+        for layer in [model.layer2, model.layer3, model.layer4]:
+            for param in layer.parameters():
                 param.requires_grad = True
 
         in_features = model.fc.in_features
 
         model.fc = nn.Sequential(
-            nn.Dropout(p=0.3),
+            nn.Dropout(p=0.4),
             nn.Linear(in_features, num_classes)
         )
 
