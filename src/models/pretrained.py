@@ -20,7 +20,7 @@ def build_pretrained(model_name: str = "resnet18", num_classes: int = 100, freez
         in_features = model.fc.in_features
 
         model.fc = nn.Sequential(
-            nn.Dropout(p=0.5),
+            nn.Dropout(p=0.3),
             nn.Linear(in_features, num_classes)
         )
 

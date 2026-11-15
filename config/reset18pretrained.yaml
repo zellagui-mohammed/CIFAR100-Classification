@@ -10,19 +10,16 @@ data:
   normalization: imagenet
 
 training:
-  epochs: 20
+  epochs: 35
   optimizer: adamw
   backbone_lr: 0.0001
   classifier_lr: 0.001
-  weight_decay: 0.0001
+  weight_decay: 0.00005
   scheduler: cosine
-  early_stopping_patience: 7
+  early_stopping_patience: 10
 
 model:
   name: resnet18
   num_classes: 100
   freeze_backbone: false
-  trainable_layers:
-    - layer3
-    - layer4
-    - fc
+  dropout: 0.3
