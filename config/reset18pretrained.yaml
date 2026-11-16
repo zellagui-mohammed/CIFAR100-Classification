@@ -10,10 +10,10 @@ data:
   normalization: imagenet
 
 training:
-  epochs: 45
+  epochs: 50
   optimizer: adamw
   backbone_lr: 0.00005
-  classifier_lr: 0.0005
+  classifier_lr: 0.001
   weight_decay: 0.0001
   scheduler: cosine
   early_stopping_patience: 10
