@@ -13,7 +13,7 @@ def build_pretrained(model_name: str = "resnet18", num_classes: int = 100, freez
             param.requires_grad = False
 
         # Dégeler layer2, layer3 et layer4
-        for layer in [model.layer2, model.layer3, model.layer4]:
+        for layer in [model.layer1,model.layer2, model.layer3, model.layer4]:
             for param in layer.parameters():
                 param.requires_grad = True
 

@@ -10,7 +10,7 @@ data:
   normalization: imagenet
 
 training:
-  epochs: 50
+  epochs: 60
   optimizer: adamw
   backbone_lr: 0.0001
   classifier_lr: 0.001
